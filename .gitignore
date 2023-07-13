@@ -1,0 +1,12 @@
+__pycache__
+/build/
+/dist/
+/cache/
+/downloads/
+.vscode
+geoflow.egg-info
+/venv/
+/htmlcov/
+.pytest_cache
+.coverage
+/test_sample/
