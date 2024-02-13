@@ -1,0 +1,5 @@
+annotated-types==0.6.0
+psycopg2==2.9.9
+pydantic==2.6.1
+pydantic_core==2.16.2
+typing_extensions==4.9.0
