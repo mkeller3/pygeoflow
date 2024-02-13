@@ -7,6 +7,9 @@ def where_filter(
     current_node: object,
     sql_filter: str=None
 ):
+    """
+    This method will create a table that is the output of filtering another table.
+    """
     new_table_name = current_node["output_table_name"]
     table = node["output_table_name"]
     fields = utilities.get_table_columns(

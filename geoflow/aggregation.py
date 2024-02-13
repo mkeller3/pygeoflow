@@ -6,6 +6,9 @@ def count_number_of_rows_in_table(
     node_a: object,
     current_node: object
 ):
+    """
+    This method will create a table that counts the number of rows in a table.
+    """
     new_table_name = current_node["output_table_name"]
     table = node_a["output_table_name"]
     utilities.drop_table(

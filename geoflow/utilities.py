@@ -4,6 +4,9 @@ def drop_table(
     conn,
     node: object
 ):
+    """
+    This method will drop a table if it exists.
+    """
     table = node["output_table_name"]
     cur.execute(f"""
         DROP TABLE IF EXISTS "{table}"
@@ -15,6 +18,9 @@ def standardize_table(
     conn,
     node: object
 ):
+    """
+    This method will standardize a table by adding a geometry index and gid column.
+    """
     table = node["output_table_name"]
     cur.execute(f"""
         DROP INDEX IF EXISTS "{table}_geom_idx"

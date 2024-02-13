@@ -32,11 +32,17 @@ class Worflow():
         self.workflow = workflow
         self.workflow_stats = {
             "total_time": 0
-        }
+        }    
 
-    
-
-    def sort_workflow(self, nodes, edges):
+    def sort_workflow(
+        self,
+        nodes: list,
+        edges: list
+    ):
+        """
+        Method that is used to sort the nodes in the correct order
+        to process for an entire workflow
+        """
         graph = defaultdict(list)
         in_degree = {node['id']: 0 for node in nodes}
 
@@ -70,7 +76,11 @@ class Worflow():
 
         return nodes_ordered
 
-    def run_step(self, step, index):
+    def run_step(
+        self, 
+        step: object,
+        index: int
+    ):
         """
         Method called to run a single step within a workflow
         """
@@ -79,12 +89,9 @@ class Worflow():
 
         if step["data"]["type"] == "analysis":
             start_time=time.time()
-            # edges = [edge for edge in self.workflow['edges'] if "target" in edge and edge["target"] == step["id"]]
-            # source_nodes = [node for node in self.workflow['nodes'] if "id" in node and node["id"] == edge["source"]]
             edges = [edge["source"] for edge in self.workflow['edges'] if edge["target"] == step["id"]]
             source_nodes = [node for node in self.workflow['nodes'] if "id" in node and node["id"] in edges]
             if step["data"]["analysis"] == "intersects":
-                print(source_nodes)
                 try:
                     models.IntersectsModel(
                         node_a=source_nodes[0]["data"],
@@ -103,7 +110,7 @@ class Worflow():
             elif step["data"]["analysis"] == "buffer":
                 try:
                     models.BufferModel(
-                        node=self.workflow['nodes'][step["node_a"]],
+                        node=source_nodes[0]["data"],
                         current_node=step,
                         distance_in_meters=step["distance_in_meters"]
                     )
@@ -112,9 +119,9 @@ class Worflow():
                 statement = spatial_operations.buffer(
                     cur=cur,
                     conn=conn,
-                    node=self.workflow['nodes'][step["node_a"]],
+                    node=source_nodes[0]["data"],
                     distance_in_meters=step["distance_in_meters"],
-                    current_node=step
+                    current_node=step["data"]
                 )
             elif step["data"]["analysis"] == 'filter':
                 
@@ -136,48 +143,48 @@ class Worflow():
             elif step["data"]["analysis"] == 'clip':
                 try:
                     models.ClipModel(
-                        node_a=self.workflow['nodes'][step["node_a"]],
-                        node_b=self.workflow['nodes'][step["node_b"]],
-                        current_node=step
+                        node_a=source_nodes[0]["data"],
+                        node_b=source_nodes[1]["data"],
+                        current_node=step["data"]
                     )
                 except ValidationError as exception:
                     raise ValidationError(exception) from exception
                 statement = spatial_operations.clip(
                     cur=cur,
                     conn=conn,
-                    node_a=self.workflow['nodes'][step["node_a"]],
-                    node_b=self.workflow['nodes'][step["node_b"]],
-                    current_node=step
+                    node_a=source_nodes[0]["data"],
+                    node_b=source_nodes[1]["data"],
+                    current_node=step["data"]
                 )
             elif step["data"]["analysis"] == 'centroids':
                 try:
                     models.CentroidModel(
-                        node_a=self.workflow['nodes'][step["node_a"]],
-                        current_node=step
+                        node_a=source_nodes[0]["data"],
+                        current_node=step["data"]
                     )
                 except ValidationError as exception:
                     raise ValidationError(exception) from exception
                 statement = spatial_operations.centroid(
                     cur=cur,
                     conn=conn,
-                    node_a=self.workflow['nodes'][step["node_a"]],
-                    current_node=step
+                    node_a=source_nodes[0]["data"],
+                    current_node=step["data"]
                 )
             elif step["data"]["analysis"] == 'closest_point_to_polygons':
                 try:
                     models.ClosestPointToPolygonsModel(
-                        node_a=self.workflow['nodes'][step["node_a"]],
-                        node_b=self.workflow['nodes'][step["node_b"]],
-                        current_node=step
+                        node_a=source_nodes[0]["data"],
+                        node_b=source_nodes[1]["data"],
+                        current_node=step["data"]
                     )
                 except ValidationError as exception:
                     raise ValidationError(exception) from exception
                 statement = spatial_operations.get_closest_point_to_polygons(
                     cur=cur,
                     conn=conn,
-                    node_a=self.workflow['nodes'][step["node_a"]],
-                    node_b=self.workflow['nodes'][step["node_b"]],
-                    current_node=step
+                    node_a=source_nodes[0]["data"],
+                    node_b=source_nodes[1]["data"],
+                    current_node=step["data"]
                 )
             else:
                 raise ValueError("No Analysis Found")
@@ -199,10 +206,16 @@ class Worflow():
         cur.close()
         conn.close()
 
-    def sort_nodes_by_id_order(self, nodes, id_order):
-        # Create a dictionary to store the position of each node ID in the provided order
+    def sort_nodes_by_id_order(
+        self,
+        nodes: list,
+        id_order: list
+    ):
+        """
+        Method that is used to sort the nodes in order of runtime.
+        """
         order_dict = {node_id: index for index, node_id in enumerate(id_order)}
-        # Sort the nodes based on their position in the provided order
+
         sorted_nodes = sorted(nodes, key=lambda x: order_dict[x['id']])
         return sorted_nodes
 

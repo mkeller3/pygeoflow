@@ -7,6 +7,9 @@ def get_closest_point_to_polygons(
     node_b: object,
     current_node: object
 ):
+    """
+    This method will create a table that find the closest point to each polygon.
+    """
     new_table_name = current_node["output_table_name"]
     table_a = node_a["output_table_name"]
     table_b = node_b["output_table_name"]
@@ -45,6 +48,9 @@ def clip(
     node_b: object,
     current_node: object
 ):
+    """
+    This method will create a table that clips a dataset to within a polygon dataset.
+    """
     new_table_name = current_node["output_table_name"]
     table_a = node_a["output_table_name"]
     table_b = node_b["output_table_name"]
@@ -88,6 +94,9 @@ def centroid(
     node_a: object,
     current_node: object
 ):
+    """
+    This method will create a table that finds the centroid of each polygon.
+    """
     new_table_name = current_node["output_table_name"]
     table = node_a["output_table_name"]
     fields = utilities.get_table_columns(
@@ -113,6 +122,9 @@ def buffer(
     distance_in_meters: float,
     current_node: object
 ):
+    """
+    This method will create a table that buffers points by a set distance.
+    """
     new_table_name = current_node["output_table_name"]
     table = node["output_table_name"]
     fields = utilities.get_table_columns(

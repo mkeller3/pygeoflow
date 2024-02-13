@@ -7,6 +7,9 @@ def spatial_join(
     node_b: object,
     current_node: object
 ):
+    """
+    This method will create a table that joins polygon data to point data.
+    """
     new_table_name = current_node["output_table_name"]
     table_a = node_a["output_table_name"]
     table_b = node_b["output_table_name"]
@@ -38,6 +41,9 @@ def intersects(
     node_b: object,
     current_node: object
 ):
+    """
+    This method will create a table find any data within a set of polygons.
+    """
     new_table_name = current_node["output_table_name"]
     table_a = node_a["output_table_name"]
     table_b = node_b["output_table_name"]
