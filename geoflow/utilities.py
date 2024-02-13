@@ -10,7 +10,7 @@ def drop_table(
     """)
     conn.commit()
 
-def create_default_columns(
+def standardize_table(
     cur,
     conn,
     node: object
@@ -38,7 +38,8 @@ def create_default_columns(
 def get_table_columns(
     cur,
     table: str,
-    new_table_name: str=None
+    new_table_name: str=None,
+    return_as_string: bool=True
 ) -> str:
     """
     Method to return a list of columns for a table.
@@ -71,4 +72,7 @@ def get_table_columns(
 
     string_fields = ','.join(fields)
 
-    return f"{string_fields},"
+    if return_as_string:
+        return f"{string_fields},"
+    else:
+        return fields
