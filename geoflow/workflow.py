@@ -217,6 +217,24 @@ class Worflow():
                     node=source_nodes[0]["data"],
                     current_node=step["data"]
                 )
+            elif step["data"]["analysis"] == 'join':
+                try:
+                    models.JoinModel(
+                        node_a=source_nodes[0]["data"],
+                        node_b=source_nodes[1]["data"],
+                        current_node=step["data"],
+                        join_type=step["data"]["join_type"]
+                    )
+                except ValidationError as exception:
+                    raise ValidationError(exception) from exception
+                statement = join.join(
+                    cur=cur,
+                    conn=conn,
+                    node_a=source_nodes[0]["data"],
+                    node_b=source_nodes[1]["data"],
+                    current_node=step["data"],
+                    join_type=step["data"]["join_type"]
+                )
             else:
                 raise ValueError("No Analysis Found")
             cur.execute(statement)

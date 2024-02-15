@@ -108,3 +108,12 @@ class SaveTableModel(BaseModel):
     """
     node: GenericNode
     current_node: GenericNode
+
+class JoinModel(BaseModel):
+    """
+    Model used for validation of joining data
+    """
+    node_a: GenericNode
+    node_b: GenericNode
+    current_node: GenericNode
+    join_type: Literal['INNER JOIN','LEFT JOIN','RIGHT JOIN','FULL OUTER JOIN']
