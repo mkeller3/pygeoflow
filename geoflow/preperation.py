@@ -71,17 +71,34 @@ def find_and_replace(
     statement = "test"
     return statement
 
-# TODO normalize
 def normalize(
     cur,
     conn,
-    node_a: object,
-    current_node: object
+    node: object,
+    current_node: object,
+    column: str,
+    decimals: int=2
 ):
-    statement = "test"
+    new_table_name = current_node["output_table_name"]
+    table = node["output_table_name"]
+
+    fields = utilities.get_table_columns(
+        cur=cur,
+        table=table
+    )
+    utilities.drop_table(
+        cur=cur,
+        conn=conn,
+        node=current_node
+    )
+    statement = f"""
+    CREATE TABLE {new_table_name} AS
+    SELECT ROUND(ROUND(({column} - min_value),{decimals}) / ROUND((max_value - min_value),{decimals}),{decimals}) AS normalized, {fields} "{table}".geom
+    FROM {table}, (SELECT MIN({column}) AS min_value, MAX({column}) AS max_value FROM {table}) AS min_max;
+    """
     return statement
 
-# TODO normalize
+# TODO rename_column
 def rename_column(
     cur,
     conn,

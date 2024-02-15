@@ -8,7 +8,21 @@ class NodeModel(BaseModel):
     Model used for validation of a node in the workflow
     """
 
-    type: str=Literal['source', 'analysis']
+    type: str
+    data: object
+    id: str
+
+    class Config:
+        populate_by_name = True
+        extra = 'allow'
+
+class EdgeModel(BaseModel):
+    """
+    Model used for validation of a edge in the workflow
+    """
+
+    source: str
+    target: str
 
     class Config:
         populate_by_name = True
@@ -20,6 +34,7 @@ class WorkflowModel(BaseModel):
     """
 
     nodes: List[NodeModel]
+    edges: List[EdgeModel]
 
 class GenericNode(BaseModel):
     """
@@ -77,3 +92,12 @@ class ClosestPointToPolygonsModel(BaseModel):
     node_a: GenericNode
     node_b: GenericNode
     current_node: GenericNode
+
+class NormalizeModel(BaseModel):
+    """
+    Model used for validation of normalize
+    """
+    node: GenericNode
+    current_node: GenericNode
+    column: str
+    decimals: int

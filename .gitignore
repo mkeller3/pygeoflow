@@ -11,3 +11,4 @@ htmlcov/
 .coverage
 test_sample/
 log/
+test.py

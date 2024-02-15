@@ -111,8 +111,8 @@ class Worflow():
                 try:
                     models.BufferModel(
                         node=source_nodes[0]["data"],
-                        current_node=step,
-                        distance_in_meters=step["distance_in_meters"]
+                        current_node=step["data"],
+                        distance_in_meters=step["data"]["distance_in_meters"]
                     )
                 except ValidationError as exception:
                     raise ValidationError(exception) from exception
@@ -120,7 +120,7 @@ class Worflow():
                     cur=cur,
                     conn=conn,
                     node=source_nodes[0]["data"],
-                    distance_in_meters=step["distance_in_meters"],
+                    distance_in_meters=step["data"]["distance_in_meters"],
                     current_node=step["data"]
                 )
             elif step["data"]["analysis"] == 'filter':
@@ -186,6 +186,24 @@ class Worflow():
                     node_b=source_nodes[1]["data"],
                     current_node=step["data"]
                 )
+            elif step["data"]["analysis"] == 'normalize':
+                try:
+                    models.NormalizeModel(
+                        node=source_nodes[0]["data"],
+                        current_node=step["data"],
+                        column=step["data"]["column"],
+                        decimals=step["data"]["decimals"]
+                    )
+                except ValidationError as exception:
+                    raise ValidationError(exception) from exception
+                statement = preperation.normalize(
+                    cur=cur,
+                    conn=conn,
+                    node=source_nodes[0]["data"],
+                    current_node=step["data"],
+                    column=step["data"]["column"],
+                    decimals=step["data"]["decimals"]
+                )
             else:
                 raise ValueError("No Analysis Found")
             cur.execute(statement)
@@ -228,17 +246,27 @@ class Worflow():
 
         try:
             models.WorkflowModel(
-                nodes=self.workflow['nodes']
+                nodes=self.workflow['nodes'],
+                edges=self.workflow['edges']
             )
         except ValidationError as exception:
             raise ValidationError(exception) from exception
         
-        ordered_nodes = self.sort_workflow(self.workflow['nodes'], self.workflow['edges'])
+        ordered_nodes = self.sort_workflow(
+            nodes=self.workflow['nodes'],
+            edges=self.workflow['edges']
+        )
         
-        self.workflow['nodes'] = self.sort_nodes_by_id_order(self.workflow['nodes'], ordered_nodes)
+        self.workflow['nodes'] = self.sort_nodes_by_id_order(
+            nodes=self.workflow['nodes'],
+            id_order=ordered_nodes
+        )
 
         for index, step in enumerate(self.workflow['nodes']):
-            self.run_step(step, index)
+            self.run_step(
+                step=step,
+                index=index
+            )
 
         conn = psycopg2.connect(f"host={self.db_host} dbname={self.db_database} user={self.db_user} password={self.db_password}")
         cur = conn.cursor(cursor_factory=RealDictCursor)
