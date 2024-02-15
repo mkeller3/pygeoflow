@@ -125,3 +125,10 @@ class DifferenceModel(BaseModel):
     node_a: GenericNode
     node_b: GenericNode
     current_node: GenericNode
+
+class UnionModel(BaseModel):
+    """
+    Model used for validation of union
+    """
+    current_node: GenericNode
+    tables: list
