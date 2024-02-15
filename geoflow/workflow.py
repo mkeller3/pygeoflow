@@ -9,6 +9,7 @@ from geoflow import utilities
 from geoflow import preperation
 from geoflow import join
 from geoflow import spatial_operations
+from geoflow import export
 from geoflow import models
 from geoflow import logger
 
@@ -203,6 +204,18 @@ class Worflow():
                     current_node=step["data"],
                     column=step["data"]["column"],
                     decimals=step["data"]["decimals"]
+                )
+            elif step["data"]["analysis"] == 'save_table':
+                try:
+                    models.SaveTableModel(
+                        node=source_nodes[0]["data"],
+                        current_node=step["data"]
+                    )
+                except ValidationError as exception:
+                    raise ValidationError(exception) from exception
+                statement = export.save_as_table(
+                    node=source_nodes[0]["data"],
+                    current_node=step["data"]
                 )
             else:
                 raise ValueError("No Analysis Found")

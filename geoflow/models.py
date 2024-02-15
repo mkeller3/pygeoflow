@@ -101,3 +101,10 @@ class NormalizeModel(BaseModel):
     current_node: GenericNode
     column: str
     decimals: int
+
+class SaveTableModel(BaseModel):
+    """
+    Model used for validation of saving table
+    """
+    node: GenericNode
+    current_node: GenericNode

@@ -1,11 +1,13 @@
-from geoflow import utilities
 
-# TODO save_as_table
 def save_as_table(
-    cur,
-    conn,
-    node_a: object,
+    node: object,
     current_node: object
 ):
-    statement = "test"
+    new_table_name = current_node["output_table_name"]
+    table = node["output_table_name"]
+    statement = f"""
+    CREATE TABLE {new_table_name} AS
+    SELECT *
+    FROM {table}
+    """
     return statement
