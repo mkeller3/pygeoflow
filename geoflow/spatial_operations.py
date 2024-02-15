@@ -233,3 +233,13 @@ def erase(
 ):
     statement = "test"
     return statement
+
+# TODO disjoint
+def disjoint(
+    cur,
+    conn,
+    node_a: object,
+    current_node: object
+):
+    statement = "test"
+    return statement

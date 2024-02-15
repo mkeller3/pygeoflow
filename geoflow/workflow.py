@@ -235,7 +235,7 @@ class Worflow():
                     current_node=step["data"],
                     join_type=step["data"]["join_type"]
                 )
-            elif step["data"]["analysis"] == 'diference':
+            elif step["data"]["analysis"] == 'difference':
                 try:
                     models.DifferenceModel(
                         node_a=source_nodes[0]["data"],
@@ -248,6 +248,18 @@ class Worflow():
                     node_a=source_nodes[0]["data"],
                     node_b=source_nodes[1]["data"],
                     current_node=step["data"]
+                )
+            elif step["data"]["analysis"] == 'union':
+                try:
+                    models.UnionModel(
+                        current_node=step["data"],
+                        tables=step["data"]["tables"]
+                    )
+                except ValidationError as exception:
+                    raise ValidationError(exception) from exception
+                statement = join.union(
+                    current_node=step["data"],
+                    tables=step["data"]["tables"]
                 )
             else:
                 raise ValueError("No Analysis Found")

@@ -124,12 +124,16 @@ def difference(
     """
     return statement
 
-# TODO union
 def union(
-    cur,
-    conn,
-    node_a: object,
-    current_node: object
+    current_node: object,
+    tables: list
 ):
-    statement = "test"
+    new_table_name = current_node["output_table_name"]
+    statement = f"""
+    CREATE TABLE IF NOT EXISTS "{new_table_name}" AS
+    """
+    for count, table in enumerate(tables):
+        statement += f"""SELECT * FROM {table}"""
+        if (count + 1) < len(tables):
+            statement += " UNION ALL"
     return statement
