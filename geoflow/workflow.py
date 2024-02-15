@@ -235,6 +235,20 @@ class Worflow():
                     current_node=step["data"],
                     join_type=step["data"]["join_type"]
                 )
+            elif step["data"]["analysis"] == 'diference':
+                try:
+                    models.DifferenceModel(
+                        node_a=source_nodes[0]["data"],
+                        node_b=source_nodes[1]["data"],
+                        current_node=step["data"]
+                    )
+                except ValidationError as exception:
+                    raise ValidationError(exception) from exception
+                statement = join.difference(
+                    node_a=source_nodes[0]["data"],
+                    node_b=source_nodes[1]["data"],
+                    current_node=step["data"]
+                )
             else:
                 raise ValueError("No Analysis Found")
             cur.execute(statement)

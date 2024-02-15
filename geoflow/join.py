@@ -103,20 +103,25 @@ def join(
     statement = f"""
         CREATE TABLE IF NOT EXISTS "{new_table_name}" AS 
         SELECT {a_fields} {b_fields}
-        FROM "{table_a}" AS a, 
+        FROM "{table_a}" AS a
         {join_type} "{table_b}" AS b
         ON a.{column_a} = b.{column_b};   
     """
     return statement
 
-# TODO difference
 def difference(
-    cur,
-    conn,
     node_a: object,
+    node_b: object,
     current_node: object
 ):
-    statement = "test"
+    new_table_name = current_node["output_table_name"]
+    table_a = node_a["output_table_name"]
+    table_b = node_b["output_table_name"]
+    statement = f"""
+        CREATE TABLE IF NOT EXISTS "{new_table_name}" AS 
+        SELECT ST_Difference(a.geom,b.geom) as geom
+        FROM "{table_a}" AS a, "{table_b}" AS b   
+    """
     return statement
 
 # TODO union
