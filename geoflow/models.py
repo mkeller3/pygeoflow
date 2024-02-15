@@ -117,3 +117,11 @@ class JoinModel(BaseModel):
     node_b: GenericNode
     current_node: GenericNode
     join_type: Literal['INNER JOIN','LEFT JOIN','RIGHT JOIN','FULL OUTER JOIN']
+
+class DifferenceModel(BaseModel):
+    """
+    Model used for validation of difference
+    """
+    node_a: GenericNode
+    node_b: GenericNode
+    current_node: GenericNode
