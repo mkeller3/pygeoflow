@@ -41,14 +41,23 @@ def cast(
     statement = "test"
     return statement
 
-# TODO create_column
 def create_column(
-    cur,
-    conn,
-    node_a: object,
-    current_node: object
+    node: object,
+    column_name: str,
+    column_type: str,
+    expression: str
 ):
-    statement = "test"
+    """
+    Method to create a new column in a table based off of an expression.
+    """
+    table = node["output_table_name"]
+    statement = f"""
+    ALTER TABLE {table} 
+    ADD COLUMN IF NOT EXISTS '{column_name}' {column_type};
+
+    UPDATE '{table}'
+    SET '{column_name}' = {expression};
+    """
     return statement
 
 # TODO drop_column
