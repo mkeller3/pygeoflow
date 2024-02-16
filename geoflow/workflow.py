@@ -316,6 +316,22 @@ class Worflow():
                     node=step["data"],
                     column_name=step["data"]["column_name"]
                 )
+            elif step["data"]["analysis"] == 'find_and_replace':
+                try:
+                    models.FindAndReplaceModel(
+                        node=step["data"],
+                        column_name=step["data"]["column_name"],
+                        old_value=step["data"]["old_value"],
+                        new_value=step["data"]["new_value"]
+                    )
+                except ValidationError as exception:
+                    raise ValidationError(exception) from exception
+                statement = preperation.find_and_replace(
+                    node=step["data"],
+                    column_name=step["data"]["column_name"],
+                    old_value=step["data"]["old_value"],
+                    new_value=step["data"]["new_value"]
+                )
             else:
                 raise ValueError("No Analysis Found")
             cur.execute(statement)
