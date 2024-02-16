@@ -10,6 +10,7 @@ from geoflow import preperation
 from geoflow import join
 from geoflow import spatial_operations
 from geoflow import export
+from geoflow import parser
 from geoflow import models
 from geoflow import logger
 
@@ -260,6 +261,18 @@ class Worflow():
                 statement = join.union(
                     current_node=step["data"],
                     tables=step["data"]["tables"]
+                )
+            elif step["data"]["analysis"] == 'table_from_geojson':
+                try:
+                    models.TableFromGeojsonModel(
+                        current_node=step["data"],
+                        geojson=step["data"]["geojson"]
+                    )
+                except ValidationError as exception:
+                    raise ValidationError(exception) from exception
+                statement = parser.table_from_geojson(
+                    geojson=step["data"]["geojson"],
+                    current_node=step["data"]
                 )
             else:
                 raise ValueError("No Analysis Found")

@@ -1,11 +1,12 @@
 from geoflow import utilities
 
-# TODO table_from_geojson
 def table_from_geojson(
-    cur,
-    conn,
-    node_a: object,
+    geojson: object,
     current_node: object
 ):
-    statement = "test"
+    new_table_name = current_node["output_table_name"]
+    statement = f"""
+        CREATE TABLE IF NOT EXISTS "{new_table_name}" AS 
+        SELECT ST_GeomFromGeoJSON('{geojson}') as geom
+    """
     return statement
