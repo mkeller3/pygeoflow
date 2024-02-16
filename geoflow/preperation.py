@@ -2,7 +2,6 @@ from geoflow import utilities
 
 def where_filter(
     cur,
-    conn,
     node: object,
     current_node: object,
     sql_filter: str=None
@@ -16,15 +15,11 @@ def where_filter(
         cur=cur,
         table=table
     )
-    utilities.drop_table(
-        cur=cur,
-        conn=conn,
-        node=current_node
-    )
+
     statement = f"""
-        CREATE TABLE IF NOT EXISTS "{new_table_name}" AS 
-        SELECT {fields} "{table}".geom
-        FROM "{table}" 
+    CREATE TABLE {new_table_name} AS 
+    SELECT {fields}, {table}.geom
+    FROM {table} 
     """
     if sql_filter:
         statement += f"""WHERE {sql_filter}"""
@@ -45,7 +40,7 @@ def create_column(
     ALTER TABLE {table} 
     ADD COLUMN IF NOT EXISTS '{column_name}' {column_type};
 
-    UPDATE '{table}'
+    UPDATE {table}
     SET '{column_name}' = {expression};
     """
     return statement
@@ -70,6 +65,9 @@ def find_and_replace(
     old_value,
     new_value
 ):
+    """
+    Method to find and replace values in a column
+    """
     table = node["output_table_name"]
     statement = f"""
     UPDATE '{table}' 
@@ -79,12 +77,14 @@ def find_and_replace(
 
 def normalize(
     cur,
-    conn,
     node: object,
     current_node: object,
     column: str,
     decimals: int=2
 ):
+    """
+    Method to create a new column that will normalize a numerical column.
+    """
     new_table_name = current_node["output_table_name"]
     table = node["output_table_name"]
 
@@ -92,14 +92,10 @@ def normalize(
         cur=cur,
         table=table
     )
-    utilities.drop_table(
-        cur=cur,
-        conn=conn,
-        node=current_node
-    )
+
     statement = f"""
     CREATE TABLE {new_table_name} AS
-    SELECT ROUND(ROUND(({column} - min_value),{decimals}) / ROUND((max_value - min_value),{decimals}),{decimals}) AS normalized, {fields} "{table}".geom
+    SELECT ROUND(ROUND(({column} - min_value),{decimals}) / ROUND((max_value - min_value),{decimals}),{decimals}) AS normalized, {fields}, {table}.geom
     FROM {table}, (SELECT MIN({column}) AS min_value, MAX({column}) AS max_value FROM {table}) AS min_max;
     """
     return statement
@@ -109,9 +105,12 @@ def rename_column(
     column_name: str,
     new_column_name: str
 ):
+    """
+    Method to rename a column
+    """
     table = node["output_table_name"]
     statement = f"""
-    ALTER TABLE '{table}'
+    ALTER TABLE {table}
     RENAME COLUMN '{column_name}' TO '{new_column_name}';
     """
     return statement

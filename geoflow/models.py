@@ -35,6 +35,8 @@ class WorkflowModel(BaseModel):
 
     nodes: List[NodeModel]
     edges: List[EdgeModel]
+    workflow_id: str
+    clear_temporary_tables: bool
 
 class GenericNode(BaseModel):
     """

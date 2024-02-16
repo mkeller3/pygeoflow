@@ -8,38 +8,24 @@ def drop_table(
     This method will drop a table if it exists.
     """
     table = node["output_table_name"]
-    cur.execute(f"""
-        DROP TABLE IF EXISTS "{table}"
-    """)
+    cur.execute(f"""DROP TABLE IF EXISTS {table};""")
     conn.commit()
 
 def standardize_table(
-    cur,
-    conn,
     node: object
 ):
     """
     This method will standardize a table by adding a geometry index and gid column.
     """
     table = node["output_table_name"]
-    cur.execute(f"""
-        DROP INDEX IF EXISTS "{table}_geom_idx"
-    """)
-    cur.execute(f"""
-        ALTER TABLE {table} DROP COLUMN IF EXISTS "gid";
-    """)
-    conn.commit()
-    cur.execute(f"""
-        CREATE INDEX "{table}_geom_idx"
-        ON "{table}"
-        USING GIST (geom);
-    """)
-    cur.execute(f"""
-        ALTER TABLE "{table}" 
-        ADD COLUMN gid SERIAL PRIMARY KEY;
-    """)
-    conn.commit()
 
+    statement = f"""
+    DROP INDEX IF EXISTS {table}_geom_idx;
+    ALTER TABLE {table} DROP COLUMN IF EXISTS "gid";
+    CREATE INDEX {table}_geom_idx ON {table} USING GIST (geom);
+    ALTER TABLE {table} ADD COLUMN gid SERIAL PRIMARY KEY;
+    """
+    return statement
 
 def get_table_columns(
     cur,
@@ -74,11 +60,14 @@ def get_table_columns(
             fields.append(f'''"{table}"."{field['column_name']}"''')
 
     if len(fields) == 0:
-        return ""
+        if return_as_string:
+            return ""
+        else:
+            return []
 
     string_fields = ','.join(fields)
 
     if return_as_string:
-        return f"{string_fields},"
+        return f"{string_fields}"
     else:
         return fields
