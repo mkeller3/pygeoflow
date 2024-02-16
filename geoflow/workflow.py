@@ -88,11 +88,16 @@ class Worflow():
         """
         conn = psycopg2.connect(f"host={self.db_host} dbname={self.db_database} user={self.db_user} password={self.db_password} options='-c statement_timeout=3600000'")
         cur = conn.cursor(cursor_factory=RealDictCursor)
-
         if step["data"]["type"] == "analysis":
             start_time=time.time()
             edges = [edge["source"] for edge in self.workflow['edges'] if edge["target"] == step["id"]]
             source_nodes = [node for node in self.workflow['nodes'] if "id" in node and node["id"] in edges]
+            if self.workflow['clear_temporary_tables']:
+                utilities.drop_table(
+                    cur=cur,
+                    conn=conn,
+                    node=step["data"]
+                )
             if step["data"]["analysis"] == "intersects":
                 try:
                     models.IntersectsModel(
@@ -349,9 +354,8 @@ class Worflow():
             elif step["data"]["analysis"] == 'boundary':
                 try:
                     models.BoundingBoxModel(
-                        node=step["data"],
-                        column_name=step["data"]["column_name"],
-                        new_column_name=step["data"]["new_column_name"]
+                        node=source_nodes[0]["data"],
+                        current_node=step["data"]
                     )
                 except ValidationError as exception:
                     raise ValidationError(exception) from exception
@@ -376,11 +380,11 @@ class Worflow():
                 raise ValueError("No Analysis Found")
             cur.execute(statement)
             conn.commit()
-            utilities.standardize_table(
-                cur=cur,
-                conn=conn,
+            standardize_sql_statement = utilities.standardize_table(
                 node=self.workflow['nodes'][index]["data"]
             )
+            cur.execute(standardize_sql_statement)
+            conn.commit()
 
             end_time=time.time()-start_time
             self.workflow_stats[index] = {
@@ -415,7 +419,9 @@ class Worflow():
         try:
             models.WorkflowModel(
                 nodes=self.workflow['nodes'],
-                edges=self.workflow['edges']
+                edges=self.workflow['edges'],
+                workflow_id=self.workflow['workflow_id'],
+                clear_temporary_tables=self.workflow['clear_temporary_tables']
             )
         except ValidationError as exception:
             raise ValidationError(exception) from exception
@@ -435,18 +441,6 @@ class Worflow():
                 step=step,
                 index=index
             )
-
-        conn = psycopg2.connect(f"host={self.db_host} dbname={self.db_database} user={self.db_user} password={self.db_password}")
-        cur = conn.cursor(cursor_factory=RealDictCursor)
-        for step in self.workflow:
-            if 'save_table' in step and step['save_table'] is False:
-                utilities.drop_table(
-                    cur=cur,
-                    conn=conn,
-                    node=step
-                )
-        cur.close()
-        conn.close()
 
         self.workflow_stats['total_time'] = time.time()-workflow_start_time
         logger.logger.info(self.workflow_stats)

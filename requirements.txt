@@ -3,3 +3,5 @@ psycopg2==2.9.9
 pydantic==2.6.1
 pydantic_core==2.16.2
 typing_extensions==4.9.0
+pytest==8.0.0
+coverage==7.4.1
