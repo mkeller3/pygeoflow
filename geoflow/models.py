@@ -148,3 +148,10 @@ class CreateColumnModel(BaseModel):
     column_name: str
     column_type: str
     expression: str
+
+class DropColumnModel(BaseModel):
+    """
+    Model used for validation of dropping a column
+    """
+    node: GenericNode
+    column_name: str
