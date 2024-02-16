@@ -132,3 +132,10 @@ class UnionModel(BaseModel):
     """
     current_node: GenericNode
     tables: list
+
+class TableFromGeojsonModel(BaseModel):
+    """
+    Model used for validation of creating table from geojson
+    """
+    current_node: GenericNode
+    geojson: object
