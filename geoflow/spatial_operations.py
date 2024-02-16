@@ -144,14 +144,41 @@ def buffer(
     """
     return statement
 
-# TODO bbox
-def bbox(
-    cur,
-    conn,
-    node_a: object,
+def boundary(
+    node: object,
     current_node: object
 ):
-    statement = "test"
+    """
+    Method that is used to create a new table that contains the bounding box of the entire table.
+    """
+    new_table_name = current_node["output_table_name"]
+    table = node["output_table_name"]
+    statement = f"""
+    CREATE TABLE IF NOT EXISTS "{new_table_name}" AS 
+    SELECT ST_Envelope(ST_Extent(geom)) as geom
+    FROM "{table}";
+    """
+    return statement
+
+def bounding_box(
+    cur,
+    node: object,
+    current_node: object
+):
+    """
+    Method that is used to create a new table that contains the bounding box of each row.
+    """
+    new_table_name = current_node["output_table_name"]
+    table = node["output_table_name"]
+    fields = utilities.get_table_columns(
+        cur=cur,
+        table=table
+    )
+    statement = f"""
+    CREATE TABLE IF NOT EXISTS "{new_table_name}" AS 
+    SELECT {fields} ST_Envelope(geom) as geom
+    FROM "{table}";
+    """
     return statement
 
 # TODO generate_points

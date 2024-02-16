@@ -173,3 +173,10 @@ class RenameColumnModel(BaseModel):
     node: GenericNode
     column_name: str
     new_column_name: str
+
+class BoundingBoxModel(BaseModel):
+    """
+    Model used for validation of bounding box.
+    """
+    node: GenericNode
+    current_node: GenericNode

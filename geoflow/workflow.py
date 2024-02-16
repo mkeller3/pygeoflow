@@ -346,6 +346,32 @@ class Worflow():
                     column_name=step["data"]["column_name"],
                     new_column_name=step["data"]["new_column_name"]
                 )
+            elif step["data"]["analysis"] == 'boundary':
+                try:
+                    models.BoundingBoxModel(
+                        node=step["data"],
+                        column_name=step["data"]["column_name"],
+                        new_column_name=step["data"]["new_column_name"]
+                    )
+                except ValidationError as exception:
+                    raise ValidationError(exception) from exception
+                statement = spatial_operations.boundary(
+                    node=source_nodes[0]["data"],
+                    current_node=step["data"]
+                )
+            elif step["data"]["analysis"] == 'bounding_box':
+                try:
+                    models.BoundingBoxModel(
+                        node=source_nodes[0]["data"],
+                        current_node=step["data"]
+                    )
+                except ValidationError as exception:
+                    raise ValidationError(exception) from exception
+                statement = spatial_operations.bounding_box(
+                    cur=cur,
+                    node=source_nodes[0]["data"],
+                    current_node=step["data"]
+                )
             else:
                 raise ValueError("No Analysis Found")
             cur.execute(statement)
