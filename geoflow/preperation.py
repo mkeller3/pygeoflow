@@ -31,16 +31,6 @@ def where_filter(
     statement += ";"
     return statement
 
-# TODO cast
-def cast(
-    cur,
-    conn,
-    node_a: object,
-    current_node: object
-):
-    statement = "test"
-    return statement
-
 def create_column(
     node: object,
     column_name: str,
@@ -124,14 +114,4 @@ def rename_column(
     ALTER TABLE '{table}'
     RENAME COLUMN '{column_name}' TO '{new_column_name}';
     """
-    return statement
-
-# TODO select_distinct
-def select_distinct(
-    cur,
-    conn,
-    node_a: object,
-    current_node: object
-):
-    statement = "test"
     return statement
