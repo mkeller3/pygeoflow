@@ -74,14 +74,17 @@ def drop_column(
     """
     return statement
 
-# TODO find_and_replace
 def find_and_replace(
-    cur,
-    conn,
-    node_a: object,
-    current_node: object
+    node: object,
+    column_name: str,
+    old_value,
+    new_value
 ):
-    statement = "test"
+    table = node["output_table_name"]
+    statement = f"""
+    UPDATE '{table}' 
+    SET '{column_name}' = REPLACE('{column_name}', {old_value}, {new_value})     
+    """
     return statement
 
 def normalize(

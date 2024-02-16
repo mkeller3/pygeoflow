@@ -1,5 +1,5 @@
 
-from typing import List, Literal
+from typing import List, Literal, Any
 
 from pydantic import BaseModel
 
@@ -155,3 +155,13 @@ class DropColumnModel(BaseModel):
     """
     node: GenericNode
     column_name: str
+
+class FindAndReplaceModel(BaseModel):
+    """
+    Model used for validation of finding and replacing a
+    value in a column in a table.
+    """
+    node: GenericNode
+    column_name: str
+    old_value: Any
+    new_value: Any
