@@ -114,14 +114,16 @@ def normalize(
     """
     return statement
 
-# TODO rename_column
 def rename_column(
-    cur,
-    conn,
-    node_a: object,
-    current_node: object
+    node: object,
+    column_name: str,
+    new_column_name: str
 ):
-    statement = "test"
+    table = node["output_table_name"]
+    statement = f"""
+    ALTER TABLE '{table}'
+    RENAME COLUMN '{column_name}' TO '{new_column_name}';
+    """
     return statement
 
 # TODO select_distinct

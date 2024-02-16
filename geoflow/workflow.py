@@ -332,6 +332,20 @@ class Worflow():
                     old_value=step["data"]["old_value"],
                     new_value=step["data"]["new_value"]
                 )
+            elif step["data"]["analysis"] == 'rename_column':
+                try:
+                    models.RenameColumnModel(
+                        node=step["data"],
+                        column_name=step["data"]["column_name"],
+                        new_column_name=step["data"]["new_column_name"]
+                    )
+                except ValidationError as exception:
+                    raise ValidationError(exception) from exception
+                statement = preperation.rename_column(
+                    node=step["data"],
+                    column_name=step["data"]["column_name"],
+                    new_column_name=step["data"]["new_column_name"]
+                )
             else:
                 raise ValueError("No Analysis Found")
             cur.execute(statement)

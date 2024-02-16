@@ -165,3 +165,11 @@ class FindAndReplaceModel(BaseModel):
     column_name: str
     old_value: Any
     new_value: Any
+
+class RenameColumnModel(BaseModel):
+    """
+    Model used for validation of renaming column.
+    """
+    node: GenericNode
+    column_name: str
+    new_column_name: str
