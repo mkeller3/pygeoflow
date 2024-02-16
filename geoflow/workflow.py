@@ -290,6 +290,32 @@ class Worflow():
                     column_type=step["data"]["column_type"],
                     expression=step["data"]["expression"]
                 )
+            elif step["data"]["analysis"] == 'create_column':
+                try:
+                    models.CreateColumnModel(
+                        node=step["data"],
+                        column_name=step["data"]["column_name"]
+                    )
+                except ValidationError as exception:
+                    raise ValidationError(exception) from exception
+                statement = preperation.create_column(
+                    node=step["data"],
+                    column_name=step["data"]["column_name"],
+                    column_type=step["data"]["column_type"],
+                    expression=step["data"]["expression"]
+                )
+            elif step["data"]["analysis"] == 'drop_column':
+                try:
+                    models.DropColumnModel(
+                        node=step["data"],
+                        column_name=step["data"]["column_name"]
+                    )
+                except ValidationError as exception:
+                    raise ValidationError(exception) from exception
+                statement = preperation.drop_column(
+                    node=step["data"],
+                    column_name=step["data"]["column_name"]
+                )
             else:
                 raise ValueError("No Analysis Found")
             cur.execute(statement)

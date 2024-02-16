@@ -60,14 +60,18 @@ def create_column(
     """
     return statement
 
-# TODO drop_column
 def drop_column(
-    cur,
-    conn,
-    node_a: object,
-    current_node: object
+    node: object,
+    column_name: str
 ):
-    statement = "test"
+    """
+    Method to drop a column in a table.
+    """
+    table = node["output_table_name"]
+    statement = f"""
+    ALTER TABLE {table} 
+    DROP COLUMN IF EXISTS '{column_name}';
+    """
     return statement
 
 # TODO find_and_replace
