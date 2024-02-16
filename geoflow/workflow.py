@@ -274,6 +274,22 @@ class Worflow():
                     geojson=step["data"]["geojson"],
                     current_node=step["data"]
                 )
+            elif step["data"]["analysis"] == 'table_from_geojson':
+                try:
+                    models.CreateColumnModel(
+                        node=step["data"],
+                        column_name=step["data"]["column_name"],
+                        column_type=step["data"]["column_type"],
+                        expression=step["data"]["expression"]
+                    )
+                except ValidationError as exception:
+                    raise ValidationError(exception) from exception
+                statement = preperation.create_column(
+                    node=step["data"],
+                    column_name=step["data"]["column_name"],
+                    column_type=step["data"]["column_type"],
+                    expression=step["data"]["expression"]
+                )
             else:
                 raise ValueError("No Analysis Found")
             cur.execute(statement)

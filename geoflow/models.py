@@ -139,3 +139,12 @@ class TableFromGeojsonModel(BaseModel):
     """
     current_node: GenericNode
     geojson: object
+
+class CreateColumnModel(BaseModel):
+    """
+    Model used for validation of creating a new column
+    """
+    node: GenericNode
+    column_name: str
+    column_type: str
+    expression: str
