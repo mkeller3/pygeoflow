@@ -30,6 +30,7 @@ def standardize_table(
 def get_table_columns(
     cur,
     table: str,
+    schema: str,
     new_table_name: str=None,
     return_as_string: bool=True
 ) -> str:
@@ -42,6 +43,7 @@ def get_table_columns(
     SELECT column_name
     FROM information_schema.columns
     WHERE table_name = '{table}'
+    AND table_schema = '{schema}'
     AND column_name != 'geom'
     AND column_name != 'gid';
     """

@@ -14,7 +14,7 @@ from geoflow import parser
 from geoflow import models
 from geoflow import logger
 
-class Worflow():
+class Workflow():
     """
     This class provides you the ability to execute a workflow
     """
@@ -34,7 +34,17 @@ class Worflow():
         self.workflow = workflow
         self.workflow_stats = {
             "total_time": 0
-        }    
+        }
+        
+    def create_schema_and_extenstions(self):
+        conn = psycopg2.connect(f"host={self.db_host} dbname={self.db_database} user={self.db_user} password={self.db_password} options='-c statement_timeout=3600000'")
+        cur = conn.cursor(cursor_factory=RealDictCursor)
+        cur.execute("CREATE SCHEMA IF NOT EXISTS geoflow;")
+        conn.commit()
+        cur.execute("CREATE EXTENSION IF NOT EXISTS postgis;")
+        conn.commit()
+        cur.close()
+        conn.close()
 
     def sort_workflow(
         self,
@@ -78,6 +88,14 @@ class Worflow():
 
         return nodes_ordered
 
+    def update_workflow_stats(self, index, step, end_time):
+        self.workflow_stats[index] = {
+            "new_table_name": self.workflow['nodes'][index]["data"]["output_table_name"],
+            "process_time": end_time,
+            "analysis_type": step["data"]["analysis"]
+        }
+        logger.logger.debug(self.workflow_stats[index])
+
     def run_step(
         self, 
         step: object,
@@ -109,7 +127,6 @@ class Worflow():
                     raise ValidationError(exception) from exception
                 statement = join.intersects(
                     cur=cur,
-                    conn=conn,
                     node_a=source_nodes[0]["data"],
                     node_b=source_nodes[1]["data"],
                     current_node=step["data"]
@@ -125,7 +142,6 @@ class Worflow():
                     raise ValidationError(exception) from exception
                 statement = spatial_operations.buffer(
                     cur=cur,
-                    conn=conn,
                     node=source_nodes[0]["data"],
                     distance_in_meters=step["data"]["distance_in_meters"],
                     current_node=step["data"]
@@ -142,7 +158,6 @@ class Worflow():
                     raise ValidationError(exception) from exception
                 statement = preperation.where_filter(
                     cur=cur,
-                    conn=conn,
                     node=source_nodes[0]["data"],
                     sql_filter=step["data"]["sql_filter"],
                     current_node=step["data"]
@@ -158,7 +173,6 @@ class Worflow():
                     raise ValidationError(exception) from exception
                 statement = spatial_operations.clip(
                     cur=cur,
-                    conn=conn,
                     node_a=source_nodes[0]["data"],
                     node_b=source_nodes[1]["data"],
                     current_node=step["data"]
@@ -166,15 +180,14 @@ class Worflow():
             elif step["data"]["analysis"] == 'centroids':
                 try:
                     models.CentroidModel(
-                        node_a=source_nodes[0]["data"],
+                        node=source_nodes[0]["data"],
                         current_node=step["data"]
                     )
                 except ValidationError as exception:
                     raise ValidationError(exception) from exception
                 statement = spatial_operations.centroid(
                     cur=cur,
-                    conn=conn,
-                    node_a=source_nodes[0]["data"],
+                    node=source_nodes[0]["data"],
                     current_node=step["data"]
                 )
             elif step["data"]["analysis"] == 'closest_point_to_polygons':
@@ -188,7 +201,6 @@ class Worflow():
                     raise ValidationError(exception) from exception
                 statement = spatial_operations.get_closest_point_to_polygons(
                     cur=cur,
-                    conn=conn,
                     node_a=source_nodes[0]["data"],
                     node_b=source_nodes[1]["data"],
                     current_node=step["data"]
@@ -205,7 +217,6 @@ class Worflow():
                     raise ValidationError(exception) from exception
                 statement = preperation.normalize(
                     cur=cur,
-                    conn=conn,
                     node=source_nodes[0]["data"],
                     current_node=step["data"],
                     column=step["data"]["column"],
@@ -235,7 +246,6 @@ class Worflow():
                     raise ValidationError(exception) from exception
                 statement = join.join(
                     cur=cur,
-                    conn=conn,
                     node_a=source_nodes[0]["data"],
                     node_b=source_nodes[1]["data"],
                     current_node=step["data"],
@@ -378,6 +388,7 @@ class Worflow():
                 )
             else:
                 raise ValueError("No Analysis Found")
+            # print(statement)
             cur.execute(statement)
             conn.commit()
             standardize_sql_statement = utilities.standardize_table(
@@ -387,12 +398,7 @@ class Worflow():
             conn.commit()
 
             end_time=time.time()-start_time
-            self.workflow_stats[index] = {
-                "new_table_name": self.workflow['nodes'][index]["data"]["output_table_name"],
-                "process_time": end_time,
-                "analysis_type": step["data"]["analysis"]
-            }
-            logger.logger.debug(self.workflow_stats[index])
+            self.update_workflow_stats(index, step, end_time)
         cur.close()
         conn.close()
 
@@ -437,10 +443,11 @@ class Worflow():
         )
 
         for index, step in enumerate(self.workflow['nodes']):
-            self.run_step(
-                step=step,
-                index=index
-            )
+            if step["data"]["type"] == "analysis":
+                self.run_step(
+                    step=step,
+                    index=index
+                )
 
         self.workflow_stats['total_time'] = time.time()-workflow_start_time
         logger.logger.info(self.workflow_stats)

@@ -11,28 +11,32 @@ def get_closest_point_to_polygons(
     """
     new_table_name = current_node["output_table_name"]
     table_a = node_a["output_table_name"]
+    schema_a = node_a["output_table_schema"]
     table_b = node_b["output_table_name"]
+    schema_b = node_b["output_table_schema"]
     a_fields = utilities.get_table_columns(
         cur=cur,
         table=table_a,
+        schema=schema_a,
         new_table_name="points"
     )
     b_fields = utilities.get_table_columns(
         cur=cur,
         table=table_b,
+        schema=schema_b,
         new_table_name="polygons"
     )
 
     statement = f"""
-        CREATE TABLE {new_table_name} AS 
+        CREATE TABLE IF NOT EXISTS "geoflow"."{new_table_name}" AS 
         SELECT polygons.gid, {a_fields}, {b_fields}, points.dist * 62.1371192 as distance_in_miles, polygons.geom
-        FROM {table_b} polygons
+        FROM "{schema_b}"."{table_b}" polygons
         CROSS JOIN LATERAL (
             SELECT {a_fields} polygons.geom <-> points.geom AS dist, points.geom
-            FROM {table_a} AS points
+            FROM "{schema_a}"."{table_a}" AS points
             ORDER BY dist
             LIMIT 1
-        ) points
+        ) points;
     """
     return statement
 
@@ -47,55 +51,60 @@ def clip(
     """
     new_table_name = current_node["output_table_name"]
     table_a = node_a["output_table_name"]
+    schema_a = node_a["output_table_schema"]
     table_b = node_b["output_table_name"]
+    schema_b = node_b["output_table_schema"]
     a_fields = utilities.get_table_columns(
         cur=cur,
         table=table_a,
+        schema=schema_a,
         new_table_name="a"
     )
 
     statement = f"""
-        CREATE TABLE "{new_table_name}_within" AS 
+        CREATE TABLE IF NOT EXISTS "geoflow"."{new_table_name}_within" AS 
         SELECT {a_fields}, a.geom
-        FROM {table_a} AS a, {table_b} AS b
+        FROM "{schema_a}"."{table_a}" AS a, "{schema_b}"."{table_b}" AS b
         WHERE ST_Within(a.geom, b.geom);
 
-        CREATE TABLE "{new_table_name}_intersects" AS 
+        CREATE TABLE IF NOT EXISTS "geoflow"."{new_table_name}_intersects" AS 
         SELECT {a_fields}, ST_Intersection(a.geom, b.geom) as geom
-        FROM {table_a} AS a, {table_b} AS b
+        FROM "{schema_a}"."{table_a}" AS a, "{schema_b}"."{table_b}" AS b
         WHERE ST_Intersects(a.geom, ST_Boundary(b.geom));
 
-        CREATE TABLE {new_table_name} AS 
+        CREATE TABLE IF NOT EXISTS "geoflow"."{new_table_name}" AS 
         SELECT * 
-        FROM "{new_table_name}_within"
+        FROM "geoflow"."{new_table_name}_within"
         UNION
         SELECT * 
-        FROM "{new_table_name}_intersects";
+        FROM "geoflow"."{new_table_name}_intersects";
 
-        DROP TABLE IF EXISTS "{new_table_name}_within";
-        DROP TABLE IF EXISTS "{new_table_name}_intersects";
+        DROP TABLE IF EXISTS "geoflow"."{new_table_name}_within";
+        DROP TABLE IF EXISTS "geoflow"."{new_table_name}_intersects";
     """
 
     return statement
 
 def centroid(
     cur,
-    node_a: object,
+    node: object,
     current_node: object
 ):
     """
     Method to create a table that finds the centroid of each polygon.
     """
     new_table_name = current_node["output_table_name"]
-    table = node_a["output_table_name"]
+    table = node["output_table_name"]
+    schema = node["output_table_schema"]
     fields = utilities.get_table_columns(
         cur=cur,
-        table=table
+        table=table,
+        schema=schema
     )
     statement = f"""
-        CREATE TABLE {new_table_name} AS 
+        CREATE TABLE IF NOT EXISTS "geoflow"."{new_table_name}" AS 
         SELECT {fields}, ST_Centroid(geom) as geom
-        FROM {table};
+        FROM "{schema}"."{table}";
     """
     return statement
 
@@ -110,16 +119,18 @@ def buffer(
     """
     new_table_name = current_node["output_table_name"]
     table = node["output_table_name"]
+    schema = node["output_table_schema"]
     fields = utilities.get_table_columns(
         cur=cur,
-        table=table
+        table=table,
+        schema=schema
     )
 
     statement = f"""
-        CREATE TABLE {new_table_name} AS 
+        CREATE TABLE IF NOT EXISTS "geoflow"."{new_table_name}" AS 
         SELECT {fields},
         ST_Transform(ST_Buffer(ST_Transform(geom, 3857), {distance_in_meters}), 4326) as geom
-        FROM {table};
+        FROM "{schema}"."{table}";
     """
     return statement
 
@@ -132,10 +143,11 @@ def boundary(
     """
     new_table_name = current_node["output_table_name"]
     table = node["output_table_name"]
+    schema = node["output_table_schema"]
     statement = f"""
-    CREATE TABLE {new_table_name} AS 
+    CREATE TABLE IF NOT EXISTS "geoflow"."{new_table_name}" AS 
     SELECT ST_Envelope(ST_Extent(geom)) as geom
-    FROM {table};
+    FROM "{schema}"."{table}";
     """
     return statement
 
@@ -149,14 +161,16 @@ def bounding_box(
     """
     new_table_name = current_node["output_table_name"]
     table = node["output_table_name"]
+    schema = node["output_table_schema"]
     fields = utilities.get_table_columns(
         cur=cur,
-        table=table
+        table=table,
+        schema=schema
     )
     statement = f"""
-    CREATE TABLE {new_table_name} AS 
+    CREATE TABLE IF NOT EXISTS "geoflow"."{new_table_name}" AS 
     SELECT {fields}, ST_Envelope(geom) as geom
-    FROM {table};
+    FROM "{schema}"."{table}";
     """
     return statement
 

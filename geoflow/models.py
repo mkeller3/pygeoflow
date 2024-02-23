@@ -43,6 +43,7 @@ class GenericNode(BaseModel):
     Model used for generic node
     """
     output_table_name: str
+    output_table_schema: str
 
     class Config:
         populate_by_name = True
