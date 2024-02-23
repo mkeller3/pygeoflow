@@ -1,4 +1,3 @@
-
 # TODO group_by
 def group_by(
     cur,
