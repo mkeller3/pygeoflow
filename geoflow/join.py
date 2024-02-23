@@ -12,20 +12,24 @@ def spatial_join(
     """
     new_table_name = current_node["output_table_name"]
     table_a = node_a["output_table_name"]
+    schema_a = node_a["output_table_schema"]
     table_b = node_b["output_table_name"]
+    schema_b = node_b["output_table_schema"]
     a_fields = utilities.get_table_columns(
         cur=cur,
-        table=table_a
+        table=table_a,
+        schema=schema_a
     )
     b_fields = utilities.get_table_columns(
         cur=cur,
-        table=table_b
+        table=table_b,
+        schema=schema_b
     )
 
     statement = f"""
-        CREATE TABLE {new_table_name} AS 
+        CREATE TABLE IF NOT EXISTS "geoflow"."{new_table_name}" AS 
         SELECT {a_fields}, {b_fields}, a.geom
-        FROM {table_a} AS a, {table_b} AS b
+        FROM "{schema_a}"."{table_a}" AS a, "{schema_b}"."{table_b}" AS b
         WHERE {spatial_predicate}(a.geom, b.geom);
     """
     return statement
@@ -39,24 +43,28 @@ def intersects(
     """
     This method will create a table find any data within a set of polygons.
     """
-    new_table_name = current_node["output_table_name"]
+    new_table_name = current_node["output_table_name"] 
     table_a = node_a["output_table_name"]
+    schema_a = node_a["output_table_schema"]
     table_b = node_b["output_table_name"]
+    schema_b = node_b["output_table_schema"]
     a_fields = utilities.get_table_columns(
         cur=cur,
         table=table_a,
+        schema=schema_a,
         new_table_name="a"
     )
     b_fields = utilities.get_table_columns(
         cur=cur,
         table=table_b,
+        schema=schema_b,
         new_table_name="b"
     )
 
     statement = f"""
-        CREATE TABLE {new_table_name} AS 
+        CREATE TABLE IF NOT EXISTS "geoflow"."{new_table_name}" AS 
         SELECT {a_fields}, {b_fields}, b.geom
-        FROM {table_a} AS a, {table_b} AS b
+        FROM "{schema_a}"."{table_a}" AS a, "{schema_b}"."{table_b}" AS b
         WHERE ST_INTERSECTS(a.geom, b.geom);   
     """
 
@@ -75,26 +83,30 @@ def join(
     """
     new_table_name = current_node["output_table_name"]
     table_a = node_a["output_table_name"]
+    schema_a = node_a["output_table_schema"]
     table_b = node_b["output_table_name"]
+    schema_b = node_b["output_table_schema"]
     column_a = node_a["join_column"]
     column_b = node_b["join_column"]
 
     a_fields = utilities.get_table_columns(
         cur=cur,
         table=table_a,
+        schema=schema_a,
         new_table_name="a"
     )
     b_fields = utilities.get_table_columns(
         cur=cur,
         table=table_b,
+        schema=schema_b,
         new_table_name="b"
     )
 
     statement = f"""
-        CREATE TABLE {new_table_name} AS 
+        CREATE TABLE IF NOT EXISTS "geoflow"."{new_table_name}" AS 
         SELECT {a_fields}, {b_fields}
-        FROM {table_a} AS a
-        {join_type} {table_b} AS b
+        FROM "{schema_a}"."{table_a}" AS a
+        {join_type} "{schema_b}"."{table_b}" AS b
         ON a.{column_a} = b.{column_b};   
     """
     return statement
@@ -110,11 +122,13 @@ def difference(
     """
     new_table_name = current_node["output_table_name"]
     table_a = node_a["output_table_name"]
+    schema_a = node_a["output_table_schema"]
     table_b = node_b["output_table_name"]
+    schema_b = node_b["output_table_schema"]
     statement = f"""
-        CREATE TABLE {new_table_name} AS 
+        CREATE TABLE IF NOT EXISTS "geoflow"."{new_table_name}" AS 
         SELECT ST_Difference(a.geom,b.geom) as geom
-        FROM {table_a} AS a, {table_b} AS b   
+        FROM "{schema_a}"."{table_a}" AS a, "{schema_b}"."{table_b}" AS b;
     """
     return statement
 
@@ -128,10 +142,11 @@ def union(
     """
     new_table_name = current_node["output_table_name"]
     statement = f"""
-    CREATE TABLE {new_table_name} AS
+    CREATE TABLE IF NOT EXISTS "geoflow"."{new_table_name}" AS
     """
     for count, table in enumerate(tables):
         statement += f"""SELECT * FROM {table}"""
         if (count + 1) < len(tables):
             statement += " UNION ALL "
+    statement += ";"
     return statement
