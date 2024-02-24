@@ -1,3 +1,5 @@
+"""Geoflow - Join"""
+
 from geoflow import utilities
 
 def spatial_join(
@@ -43,7 +45,7 @@ def intersects(
     """
     This method will create a table find any data within a set of polygons.
     """
-    new_table_name = current_node["output_table_name"] 
+    new_table_name = current_node["output_table_name"]
     table_a = node_a["output_table_name"]
     schema_a = node_a["output_table_schema"]
     table_b = node_b["output_table_name"]

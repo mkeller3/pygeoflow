@@ -1,3 +1,5 @@
+"""Geoflow - Spatial Operations"""
+
 from geoflow import utilities
 
 def get_closest_point_to_polygons(

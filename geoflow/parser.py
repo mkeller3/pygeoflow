@@ -1,3 +1,4 @@
+"""Geoflow - Parser"""
 
 def table_from_geojson(
     geojson: object,

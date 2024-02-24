@@ -1,3 +1,4 @@
+"""Geoflow - Models"""
 
 from typing import List, Literal, Any
 
@@ -13,6 +14,7 @@ class NodeModel(BaseModel):
     id: str
 
     class Config:
+        """config"""
         populate_by_name = True
         extra = 'allow'
 
@@ -25,9 +27,10 @@ class EdgeModel(BaseModel):
     target: str
 
     class Config:
+        """config"""
         populate_by_name = True
         extra = 'allow'
- 
+
 class WorkflowModel(BaseModel):
     """
     Model used for validation of workflow
@@ -46,6 +49,7 @@ class GenericNode(BaseModel):
     output_table_schema: str
 
     class Config:
+        """config"""
         populate_by_name = True
         extra = 'allow'
 

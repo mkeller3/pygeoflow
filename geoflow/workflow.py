@@ -1,3 +1,5 @@
+"Geoflow - Workflow"""
+
 import time
 from collections import defaultdict
 
@@ -35,8 +37,12 @@ class Workflow():
         self.workflow_stats = {
             "total_time": 0
         }
-        
+
     def create_schema_and_extenstions(self):
+        """
+        Method to create the schema and 
+        extenstions if needed.
+        """
         conn = psycopg2.connect(f"host={self.db_host} dbname={self.db_database} user={self.db_user} password={self.db_password} options='-c statement_timeout=3600000'")
         cur = conn.cursor(cursor_factory=RealDictCursor)
         cur.execute("CREATE SCHEMA IF NOT EXISTS geoflow;")
@@ -81,7 +87,7 @@ class Workflow():
         # Check for cycles
         if len(order) != len(nodes):
             raise ValueError("The graph contains a cycle.")
-        
+
         nodes_ordered = []
         for node_id in order:
             nodes_ordered.append(node_id)
@@ -89,6 +95,9 @@ class Workflow():
         return nodes_ordered
 
     def update_workflow_stats(self, index, step, end_time):
+        """
+        Method to update the workflow stats for the run
+        """
         self.workflow_stats[index] = {
             "new_table_name": self.workflow['nodes'][index]["data"]["output_table_name"],
             "process_time": end_time,
@@ -97,7 +106,7 @@ class Workflow():
         logger.logger.debug(self.workflow_stats[index])
 
     def run_step(
-        self, 
+        self,
         step: object,
         index: int
     ):
@@ -147,7 +156,7 @@ class Workflow():
                     current_node=step["data"]
                 )
             elif step["data"]["analysis"] == 'filter':
-                
+
                 try:
                     models.WhereFilterModel(
                         node=source_nodes[0]["data"],
@@ -431,12 +440,12 @@ class Workflow():
             )
         except ValidationError as exception:
             raise ValidationError(exception) from exception
-        
+
         ordered_nodes = self.sort_workflow(
             nodes=self.workflow['nodes'],
             edges=self.workflow['edges']
         )
-        
+
         self.workflow['nodes'] = self.sort_nodes_by_id_order(
             nodes=self.workflow['nodes'],
             id_order=ordered_nodes
