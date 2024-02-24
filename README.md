@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="500" src="docs/logos/GeoFlow.png"/>
+  <img width="500" src="docs/logos/GeoFlow.png"/ alt-text="main image">
   <p align="center">Cloud Native Geospatial Workflows</p>
 </p>
 

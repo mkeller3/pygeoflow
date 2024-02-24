@@ -1,3 +1,5 @@
+"""Geoflow - Logger"""
+
 import logging
 import os
 import datetime

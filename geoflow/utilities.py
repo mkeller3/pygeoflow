@@ -1,3 +1,4 @@
+"""Geoflow - Utilities"""
 
 def drop_table(
     cur,
