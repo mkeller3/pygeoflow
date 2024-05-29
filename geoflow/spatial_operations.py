@@ -176,15 +176,34 @@ def bounding_box(
     """
     return statement
 
-# TODO generate_points
-# def generate_points(
-#     cur,
-#     conn,
-#     node_a: object,
-#     current_node: object
-# ):
-#     statement = "test"
-#     return statement
+def generate_points(
+    node: object,
+    current_node: object,
+    number_of_points: int
+):
+    """
+    Method to generate random points within a set of polygons
+    """
+    
+    new_table_name = current_node["output_table_name"]
+    table = node["output_table_name"]
+    schema = node["output_table_schema"]
+
+    statement = f"""
+    CREATE TABLE "geoflow"."{new_table_name}" 
+        geom GEOMETRY(Point, 4326)
+    );
+
+    WITH geometry_collection AS (
+        SELECT ST_GeneratePoints(geom, {number_of_points}) AS geom
+        FROM "{schema}"."{table}"
+    )
+    INSERT INTO "geoflow"."{new_table_name}" (geom)
+    SELECT (ST_Dump(geom)).geom 
+    FROM geometry_collection;
+    """
+
+    return statement
 
 # TODO distance
 # def distance(

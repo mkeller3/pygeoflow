@@ -12,10 +12,16 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/mkeller3/geoflow?logo=github)
 
 
-`geoflow`, is a **Python** package that helps you create geographic workflows within a cloud data warehouse. This package can be used in isolation or paired with an api/ui to allow easier consumption.
+`geoflow`, is a **Python** package that helps you create geographic workflows within a cloud data warehouse. This package can be used in isolation or paired with an api/ui to allow easier consumption.git
 
 ## Install
 
 ```bash
 python3 -m pip install geoflow
+```
+
+## Run Test Cases
+
+```bash
+coverage run -m pytest tests
 ```

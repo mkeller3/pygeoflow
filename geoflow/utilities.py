@@ -9,7 +9,8 @@ def drop_table(
     This method will drop a table if it exists.
     """
     table = node["output_table_name"]
-    cur.execute(f"""DROP TABLE IF EXISTS {table};""")
+    schema = node["output_table_schema"]
+    cur.execute(f"""DROP TABLE IF EXISTS "{schema}"."{table}";""")
     conn.commit()
 
 def standardize_table(
@@ -19,12 +20,13 @@ def standardize_table(
     This method will standardize a table by adding a geometry index and gid column.
     """
     table = node["output_table_name"]
+    schema = node["output_table_schema"]
 
     statement = f"""
     DROP INDEX IF EXISTS {table}_geom_idx;
-    ALTER TABLE {table} DROP COLUMN IF EXISTS "gid";
-    CREATE INDEX {table}_geom_idx ON {table} USING GIST (geom);
-    ALTER TABLE {table} ADD COLUMN gid SERIAL PRIMARY KEY;
+    ALTER TABLE "{schema}"."{table}" DROP COLUMN IF EXISTS "gid";
+    CREATE INDEX {table}_geom_idx ON "{schema}"."{table}" USING GIST (geom);
+    ALTER TABLE "{schema}"."{table}" ADD COLUMN gid SERIAL PRIMARY KEY;
     """
     return statement
 
