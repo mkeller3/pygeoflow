@@ -19,3 +19,9 @@
 ```bash
 python3 -m pip install geoflow
 ```
+
+## Run Test Cases
+
+```bash
+coverage run -m pytest tests
+```

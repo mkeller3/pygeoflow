@@ -1,4 +1,3 @@
-"""Geoflow - Export"""
 
 def save_as_table(
     node: object,
@@ -8,11 +7,11 @@ def save_as_table(
     Method to create a new table
     """
     new_table_name = current_node["output_table_name"]
-    schema = node["output_table_schema"]
+    scheme = node["output_table_scheme"]
     table = node["output_table_name"]
     statement = f"""
     CREATE TABLE IF NOT EXISTS "geoflow"."{new_table_name}" AS
     SELECT *
-    FROM "{schema}"."{table}";
+    FROM "{scheme}"."{table}";
     """
     return statement

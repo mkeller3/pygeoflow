@@ -1,5 +1,5 @@
 [run]
-omit = ./venv/*,*tests*
+omit = ./venv/*,*tests*,/usr/lib/python3/*
 
 [report]
-omit = ./venv/*,*tests*
+omit = ./venv/*,*tests*,/usr/lib/python3/*

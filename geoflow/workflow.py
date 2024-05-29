@@ -8,6 +8,7 @@ from psycopg2.extras import RealDictCursor
 from pydantic import ValidationError
 
 from geoflow import utilities
+from geoflow import aggregation
 from geoflow import preperation
 from geoflow import join
 from geoflow import spatial_operations
@@ -394,6 +395,54 @@ class Workflow():
                     cur=cur,
                     node=source_nodes[0]["data"],
                     current_node=step["data"]
+                )
+            elif step["data"]["analysis"] == 'points_in_polygons':
+                try:
+                    models.PointsInPolygonsModel(
+                        node_a=source_nodes[0]["data"],
+                        node_b=source_nodes[1]["data"],
+                        current_node=step["data"],
+                        spatial_predicate=step["data"]["spatial_predicate"],
+                        join_type=step["data"]["join_type"],
+                        statistics=step["data"]["statistics"]
+                    )
+                except ValidationError as exception:
+                    raise ValidationError(exception) from exception
+                statement = aggregation.points_in_polygons(
+                    node_a=source_nodes[0]["data"],
+                    node_b=source_nodes[1]["data"],
+                    current_node=step["data"],
+                    spatial_predicate=step["data"]["spatial_predicate"],
+                    join_type=step["data"]["join_type"],
+                    statistics=step["data"]["statistics"]
+                )
+            elif step["data"]["analysis"] == 'dump_geometry':
+                try:
+                    models.DumpGeometryModel(
+                        node=source_nodes[0]["data"],
+                        current_node=step["data"],
+                        geometry_type=source_nodes[0]["data"]['geometry_type']
+                    )
+                except ValidationError as exception:
+                    raise ValidationError(exception) from exception
+                statement = aggregation.dump_geometry(
+                    node=source_nodes[0]["data"],
+                    current_node=step["data"],
+                    geometry_type=source_nodes[0]["data"]['geometry_type']
+                )
+            elif step["data"]["analysis"] == 'generate_points':
+                try:
+                    models.GeneratePointsModel(
+                        node=source_nodes[0]["data"],
+                        current_node=step["data"],
+                        number_of_points=source_nodes[0]["data"]['number_of_points']
+                    )
+                except ValidationError as exception:
+                    raise ValidationError(exception) from exception
+                statement = spatial_operations.generate_points(
+                    node=source_nodes[0]["data"],
+                    current_node=step["data"],
+                    number_of_points=source_nodes[0]["data"]['number_of_points']
                 )
             else:
                 raise ValueError("No Analysis Found")

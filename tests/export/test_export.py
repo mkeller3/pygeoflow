@@ -2,8 +2,8 @@ from geoflow import export
 
 def test_save_as_table():
     # Define test data
-    node = {"output_table_name": "node_table","output_table_schema": "geoflow"}
-    current_node = {"output_table_name": "current_node_table","output_table_schema": "geoflow"}
+    node = {"output_table_name": "node_table","output_table_scheme": "geoflow"}
+    current_node = {"output_table_name": "current_node_table","output_table_scheme": "geoflow"}
 
     # Call the function with test data
     statement = export.save_as_table(node, current_node)

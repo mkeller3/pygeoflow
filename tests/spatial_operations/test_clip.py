@@ -9,7 +9,7 @@ def test_clip(mock_get_table_columns):
     node_b = {"output_table_name": "polygon_table","output_table_schema": "geoflow"}
     current_node = {"output_table_name": "output_table","output_table_schema": "geoflow"}
     statement = clip(cur, node_a, node_b, current_node)
-    print(statement)
+
     expected_statement = """
         CREATE TABLE IF NOT EXISTS "geoflow"."output_table_within" AS 
         SELECT data_table.gid, a.geom

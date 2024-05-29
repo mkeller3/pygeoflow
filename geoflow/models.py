@@ -4,6 +4,8 @@ from typing import List, Literal, Any
 
 from pydantic import BaseModel
 
+SPATIAL_PREICATES = Literal['ST_CONTAINS','ST_INTERSECTS','ST_WITHIN','ST_OVERLAPS','ST_TOUCHES']
+
 class NodeModel(BaseModel):
     """
     Model used for validation of a node in the workflow
@@ -187,3 +189,38 @@ class BoundingBoxModel(BaseModel):
     """
     node: GenericNode
     current_node: GenericNode
+
+class StatisticsModel(BaseModel):
+    """
+    Model used for validation of statistics.
+    """
+    column: str
+    type: Literal['AVG','MIN','MAX','SUM','COUNT']
+
+
+class PointsInPolygonsModel(BaseModel):
+    """
+    Model used for validation of points in polygons.
+    """
+    node_a: GenericNode
+    node_b: GenericNode
+    current_node: GenericNode
+    spatial_predicate: SPATIAL_PREICATES
+    join_type: Literal['INNER JOIN','LEFT JOIN','RIGHT JOIN','FULL OUTER JOIN']="LEFT JOIN"
+    statistics: List[StatisticsModel]
+
+class DumpGeometryModel(BaseModel):
+    """
+    Model used for validation of dumping geometry.
+    """
+    node_a: GenericNode
+    current_node: GenericNode
+    geometry_type: Literal['Point','Polygon','Line']
+
+class GeneratePointsModel(BaseModel):
+    """
+    Model used for validation of generating points.
+    """
+    node_a: GenericNode
+    current_node: GenericNode
+    number_of_points: int
