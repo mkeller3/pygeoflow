@@ -1,4 +1,4 @@
-from geoflow import aggregation
+from pygeoflow import aggregation
 
 def test_points_in_polygons():
     node_a = {

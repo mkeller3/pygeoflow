@@ -1,5 +1,5 @@
 from unittest.mock import Mock
-from geoflow.utilities import drop_table
+from pygeoflow.utilities import drop_table
 
 def test_drop_table():
     # Mocking cursor and connection objects

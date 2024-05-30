@@ -1,4 +1,4 @@
-from geoflow.join import difference
+from pygeoflow.join import difference
 
 def test_difference():
     node_a = {"output_table_name": "node_a_table","output_table_schema": "geoflow"}

@@ -1,5 +1,5 @@
 from unittest.mock import Mock, patch
-from geoflow.spatial_operations import clip
+from pygeoflow.spatial_operations import clip
 
 @patch('geoflow.utilities.get_table_columns')
 def test_clip(mock_get_table_columns):

@@ -1,4 +1,4 @@
-from geoflow.join import union
+from pygeoflow.join import union
 
 def test_union():
     current_node = {"output_table_name": "current_node_table","output_table_schema": "geoflow"}

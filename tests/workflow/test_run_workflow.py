@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock, patch
-from geoflow import workflow
+from pygeoflow import workflow
 
 class TestWorkflow(unittest.TestCase):
     def setUp(self):

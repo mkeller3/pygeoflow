@@ -1,5 +1,5 @@
 from unittest.mock import Mock, patch
-from geoflow.spatial_operations import bounding_box
+from pygeoflow.spatial_operations import bounding_box
 
 @patch('geoflow.utilities.get_table_columns')
 def test_bounding_box(mock_get_table_columns):

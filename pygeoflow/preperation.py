@@ -1,6 +1,6 @@
 """Geoflow - Preperation"""
 
-from geoflow import utilities
+from pygeoflow import utilities
 
 def where_filter(
     cur,

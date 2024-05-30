@@ -7,15 +7,15 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 from pydantic import ValidationError
 
-from geoflow import utilities
-from geoflow import aggregation
-from geoflow import preperation
-from geoflow import join
-from geoflow import spatial_operations
-from geoflow import export
-from geoflow import parser
-from geoflow import models
-from geoflow import logger
+from pygeoflow import utilities
+from pygeoflow import aggregation
+from pygeoflow import preperation
+from pygeoflow import join
+from pygeoflow import spatial_operations
+from pygeoflow import export
+from pygeoflow import parser
+from pygeoflow import models
+from pygeoflow import logger
 
 class Workflow():
     """

@@ -1,5 +1,5 @@
 from unittest.mock import Mock, patch
-from geoflow.preperation import normalize
+from pygeoflow.preperation import normalize
 
 @patch('geoflow.utilities.get_table_columns')
 def test_normalize(mock_get_table_columns):

@@ -1,5 +1,5 @@
 from unittest.mock import Mock, patch
-from geoflow.join import intersects
+from pygeoflow.join import intersects
 
 @patch('geoflow.utilities.get_table_columns')
 def test_intersects(mock_get_table_columns):

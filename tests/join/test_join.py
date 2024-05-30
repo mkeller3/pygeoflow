@@ -1,5 +1,5 @@
 from unittest.mock import Mock, patch
-from geoflow.join import join
+from pygeoflow.join import join
 
 @patch('geoflow.utilities.get_table_columns')
 def test_join(mock_get_table_columns):

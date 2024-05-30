@@ -1,4 +1,4 @@
-from geoflow.spatial_operations import boundary
+from pygeoflow.spatial_operations import boundary
 
 def test_boundary():
     node = {"output_table_name": "polygon_table","output_table_schema": "geoflow"}

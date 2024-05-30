@@ -1,5 +1,5 @@
 from unittest.mock import Mock, patch
-from geoflow.preperation import where_filter
+from pygeoflow.preperation import where_filter
 
 @patch('geoflow.utilities.get_table_columns')
 def test_where_filter(mock_get_table_columns):

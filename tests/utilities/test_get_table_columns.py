@@ -1,5 +1,5 @@
 from unittest.mock import Mock
-from geoflow.utilities import get_table_columns
+from pygeoflow.utilities import get_table_columns
 
 def test_get_table_columns_without_new_table_name():
     # Mocking cursor object

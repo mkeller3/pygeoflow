@@ -1,4 +1,4 @@
-from geoflow.preperation import rename_column
+from pygeoflow.preperation import rename_column
 
 def test_rename_column():
     node = {"output_table_name": "node_table","output_table_schema": "geoflow"}

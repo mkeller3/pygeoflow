@@ -1,5 +1,5 @@
 from unittest.mock import Mock, patch
-from geoflow.spatial_operations import centroid
+from pygeoflow.spatial_operations import centroid
 
 @patch('geoflow.utilities.get_table_columns')
 def test_centroid(mock_get_table_columns):

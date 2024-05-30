@@ -1,4 +1,4 @@
-from geoflow.preperation import create_column
+from pygeoflow.preperation import create_column
 
 def test_create_column():
     node = {"output_table_name": "node_table","output_table_schema": "geoflow"}

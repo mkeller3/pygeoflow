@@ -1,6 +1,6 @@
 """Geoflow - Join"""
 
-from geoflow import utilities
+from pygeoflow import utilities
 
 def spatial_join(
     cur,

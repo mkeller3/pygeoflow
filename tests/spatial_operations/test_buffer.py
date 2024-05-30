@@ -1,5 +1,5 @@
 from unittest.mock import Mock, patch
-from geoflow.spatial_operations import buffer
+from pygeoflow.spatial_operations import buffer
 
 @patch('geoflow.utilities.get_table_columns')
 def test_buffer(mock_get_table_columns):

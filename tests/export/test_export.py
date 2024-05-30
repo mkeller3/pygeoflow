@@ -1,4 +1,4 @@
-from geoflow import export
+from pygeoflow import export
 
 def test_save_as_table():
     # Define test data

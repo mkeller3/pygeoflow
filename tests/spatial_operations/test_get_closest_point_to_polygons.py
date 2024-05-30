@@ -1,5 +1,5 @@
 from unittest.mock import Mock, patch
-from geoflow.spatial_operations import get_closest_point_to_polygons
+from pygeoflow.spatial_operations import get_closest_point_to_polygons
 
 @patch('geoflow.utilities.get_table_columns')
 def test_get_closest_point_to_polygons(mock_get_table_columns):
