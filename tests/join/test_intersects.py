@@ -1,7 +1,7 @@
 from unittest.mock import Mock, patch
 from pygeoflow.join import intersects
 
-@patch('geoflow.utilities.get_table_columns')
+@patch('pygeoflow.utilities.get_table_columns')
 def test_intersects(mock_get_table_columns):
     mock_get_table_columns.side_effect = lambda cur, table, schema ,new_table_name=None: f'{table}.gid'
     cur = Mock()
