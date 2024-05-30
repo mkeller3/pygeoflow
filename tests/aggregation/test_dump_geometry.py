@@ -1,4 +1,4 @@
-from geoflow import aggregation
+from pygeoflow import aggregation
 
 def test_dump_geometry():
     # Define the mock inputs

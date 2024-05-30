@@ -1,4 +1,4 @@
-from geoflow.parser import table_from_geojson
+from pygeoflow.parser import table_from_geojson
 
 def test_table_from_geojson():
     geojson = '{"type": "Point", "coordinates": [125.6, 10.1]}'

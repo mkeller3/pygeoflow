@@ -1,4 +1,4 @@
-from geoflow.preperation import find_and_replace
+from pygeoflow.preperation import find_and_replace
 
 def test_find_and_replace():
     node = {"output_table_name": "node_table","output_table_schema": "geoflow"}

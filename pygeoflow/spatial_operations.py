@@ -1,6 +1,6 @@
 """Geoflow - Spatial Operations"""
 
-from geoflow import utilities
+from pygeoflow import utilities
 
 def get_closest_point_to_polygons(
     cur,
@@ -205,14 +205,33 @@ def generate_points(
 
     return statement
 
-# TODO distance
+# TODO distance_to_nearest
 # def distance(
 #     cur,
 #     conn,
 #     node_a: object,
 #     current_node: object
 # ):
-#     statement = "test"
+    # statement = f"""
+    # SELECT
+    # src.gid AS source_id,
+    # tgt.gid AS target_id,
+    # tgt.geom as tgt_geom,
+    # src.geom,
+    # ST_DistanceSphere(src.geom, tgt.geom) / 1000 AS distance_km
+    # FROM
+    # dunkin AS src
+    # CROSS JOIN LATERAL (
+    # SELECT
+    #     gid,
+    #     geom
+    # FROM
+    #     starbucks target_points
+    # ORDER BY
+    #     src.geom <-> target_points.geom
+    # LIMIT 1
+    # ) AS tgt
+    # """
 #     return statement
 
 # TODO concave_hull

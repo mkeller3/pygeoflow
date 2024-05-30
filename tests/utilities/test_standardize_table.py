@@ -1,4 +1,4 @@
-from geoflow.utilities import standardize_table
+from pygeoflow.utilities import standardize_table
 
 def test_standardize_table():
     # Define test data

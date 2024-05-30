@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock, patch
-from geoflow import workflow
+from pygeoflow import workflow
 
 class TestWorkflow(unittest.TestCase):
     def setUp(self):
@@ -18,11 +18,11 @@ class TestWorkflow(unittest.TestCase):
         self.logger_mock = MagicMock()
         self.workflow_instance.logger = self.logger_mock
 
-    @patch('geoflow.models.WorkflowModel')
-    @patch('geoflow.workflow.Workflow.sort_workflow')
-    @patch('geoflow.workflow.Workflow.sort_nodes_by_id_order')
-    @patch('geoflow.workflow.Workflow.run_step')
-    @patch('geoflow.logger.logger')
+    @patch('pygeoflow.models.WorkflowModel')
+    @patch('pygeoflow.workflow.Workflow.sort_workflow')
+    @patch('pygeoflow.workflow.Workflow.sort_nodes_by_id_order')
+    @patch('pygeoflow.workflow.Workflow.run_step')
+    @patch('pygeoflow.logger.logger')
     def test_run_workflow(self, logger_mock, run_step_mock, sort_nodes_mock, sort_workflow_mock, workflow_model_mock):
         # Mocking dependencies
         mock_workflow_model_instance = MagicMock()

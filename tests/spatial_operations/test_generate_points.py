@@ -1,4 +1,4 @@
-from geoflow.spatial_operations import generate_points
+from pygeoflow.spatial_operations import generate_points
 
 def test_generate_points():
     # Define the mock inputs

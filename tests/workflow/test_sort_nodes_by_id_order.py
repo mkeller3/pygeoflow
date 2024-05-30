@@ -1,5 +1,5 @@
 import unittest
-from geoflow import workflow
+from pygeoflow import workflow
 
 class TestWorkflow(unittest.TestCase):
     def setUp(self):

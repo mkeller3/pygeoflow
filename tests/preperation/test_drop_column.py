@@ -1,4 +1,4 @@
-from geoflow.preperation import drop_column
+from pygeoflow.preperation import drop_column
 
 def test_drop_column():
     node = {"output_table_name": "node_table","output_table_schema": "geoflow"}
